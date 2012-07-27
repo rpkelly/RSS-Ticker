@@ -1,3 +1,10 @@
+27 July 2012
+Phase II has been completed.  Feeds now stream links across the ticker,
+ and the links will open upon being clicked.  The feeds do not look
+ particularly nice yet, but that is for phase IV.  Phase III will see
+ the options frame made optional, as well as randomly presenting links
+ and giving them a time limit upon which they may expire.
+
 23 July 2012
 Phase I has been completed.  A moving ticker and an options menu have been implemented.
 RSS feeds have not yet been implemented, and options do not save between sessions.
