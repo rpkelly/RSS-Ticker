@@ -1,3 +1,20 @@
+31 July 2012
+Phase III has been completed.  Feeds now stream in a random order across
+the ticker.  Also, clicking one will immediately remove it from the list
+of possible links to scroll across.  The ticker now refreshes its feeds
+during whatever time period is set.  The one piece of promised
+functionality that has not been delivered is the ability to make links
+expire.  However, this is partially alleviated by having the list of
+possible links reset everytime the ticker is updated.  The ticker may 
+now be launched with or without the options menu, depending on user
+settings.  Also, right clicking on the ticker will open the options
+menu if it is not already open.  The bug with the ticker not restarting
+after the mouse has been moved off of it seems to have been fixed.
+Text color has been changed from (0,0,255) to (8,232,222) in order to
+improve readability.  Finally, the text no longer leaves a trail on the
+ticker as items scroll by.
+
+
 27 July 2012
 Phase II has been completed.  Feeds now stream links across the ticker,
  and the links will open upon being clicked.  The feeds do not look

@@ -8,6 +8,7 @@ import pygame as pg
 import parser
 import optionsModel
 import rssModel
+import random
 import optView
 import tickerView
 from xml.sax import parse, SAXParseException, ContentHandler
@@ -18,16 +19,27 @@ class Controller(object):
 		self.readOptions()
 		self.rssModel = rssModel.RSSModel()
 		self.downloadRSS()
+		self.optView = None
+		self.viewExists = False
+		if self.optModel.getLaunch():
+			self.createOpt()
 		try:
 			thread.start_new_thread(self.readThread,())
 		except:
 			print "Unable to read RSS links"
-		self.optView = optView.OptView(self)
+
+		self.startPG()
+
+	def createOpt(self):
 		try:
-			thread.start_new_thread(self.startPG,())
+			self.viewExists = True
+			thread.start_new_thread(self.startOpt,())
 		except:
-			print "Unable to start ticker"
-		tk.mainloop()	
+			print "Unable to start Options"
+
+	def startOpt(self):
+		self.optView = optView.OptView(self)
+
 
 	def startPG(self):
 		pg.init()
@@ -57,6 +69,7 @@ class Controller(object):
 		self.optModel.getURLs().append( \
 			self.optView.getURL())
 		self.optView.feedEntry.delete(0,tk.END)
+		self.save()
 
 	def save(self):
 		file = open('./data/options.xml', 'w')
@@ -152,11 +165,13 @@ class Controller(object):
 		except:
 			print "Parse failure"
 		links.extend(element.getContent())
+		self.shuffleRSS()
 
 	def readThread(self):
 		while True:
-			self.downloadRSS()
 			time.sleep(self.optModel.getSync())
+			self.downloadRSS()
+			self.tickerView.notify(2)
 
 	def downloadRSS(self):
 		urls = self.optModel.getURLs()
@@ -176,6 +191,18 @@ class Controller(object):
 		self.readRSS()
 
 
+	def shuffleRSS(self):
+		ndx = 0
+		tmpList = []
+		while ndx < len(self.rssModel.getTitles()) and ndx < len(self.rssModel.getLinks()):
+			tmpList.append((self.rssModel.getTitles()[ndx], self.rssModel.getLinks()[ndx]))
+			ndx += 1
+		random.shuffle(tmpList)
+		ndx = 0
+		while ndx < len(tmpList):
+			self.rssModel.getTitles()[ndx] = tmpList[ndx][0]
+			self.rssModel.getLinks()[ndx] = tmpList[ndx][1]
+			ndx += 1
 
 if __name__ == "__main__":
 	control = Controller()

@@ -4,6 +4,7 @@ import Tkinter as tk
 class OptView(object):
 	def __init__(self, controller):
 		self.controller = controller
+		self.controller.optView = self
 		root = tk.Tk()
 		self.inVar = tk.StringVar()
 		self.refVar = tk.IntVar()
@@ -33,7 +34,7 @@ class OptView(object):
 		label.pack(side = tk.TOP)
 
 		self.box = tk.Checkbutton(row1, \
-			text = "Launch Options On Start (Coming in Next Version)", \
+			text = "Launch Options On Start", \
 			variable = self.launchVar)
 		self.box.pack(side = tk.TOP)
 
@@ -92,8 +93,16 @@ class OptView(object):
 		button.configure(command = self.controller.save)
 		button.pack(side = tk.LEFT)
 		button = tk.Button(root, text = "Quit")
-		button.configure(command = self.controller.quit)
+		button.configure(command = lambda: self.quit(root))
 		button.pack(side = tk.LEFT)
+
+		root.protocol("WM_DELETE_WINDOW", lambda: self.quit(root))
+
+		tk.mainloop()
+
+	def quit(self, root):
+		self.controller.viewExists = False
+		root.destroy()
 
 	def getLeft(self):
 		return self.leftVar.get()

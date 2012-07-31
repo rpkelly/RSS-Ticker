@@ -1,10 +1,11 @@
 <options>
-	<Launch>1</Launch>
+	<Launch>0</Launch>
 	<urls>
-		<url>http://rss.cnn.com/rss/cnn_topstories.rss</url>
+		<url>http://rss.cnn.com/rss/cnn_world.rss</url>
+		<url>http://rss.cnn.com/rss/cnn_us.rss</url>
 	</urls>
 	<Stop>0</Stop>
-	<Sync>1800</Sync>
-	<Speed>37.0</Speed>
-	<Left>0</Left>
+	<Sync>3600</Sync>
+	<Speed>50.0</Speed>
+	<Left>1</Left>
 </options>

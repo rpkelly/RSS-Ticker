@@ -17,9 +17,18 @@ class TickerView(object):
 		self.clock = pg.time.Clock()
 
 		self.font = pg.font.Font(None, 25)
-		ndx = 0;
 		self.rects = []
 		self.text = []
+
+		self.makeLinks()
+		self.speed =-1 * float(self.controller.optModel.getSpeed()) / 500.0
+
+		self.curr_ticks = pg.time.get_ticks()
+
+	def makeLinks(self):
+		del self.rects[:]
+		del self.text[:]
+		ndx = 0;
 		for title in self.controller.rssModel.getTitles():
 			if ndx == 0:
 				self.makeRect(0)
@@ -29,12 +38,8 @@ class TickerView(object):
 				self.screen.blit(self.text[ndx], self.rects[ndx])
 			ndx += 1
 
-		self.speed =-1 * float(self.controller.optModel.getSpeed()) / 500.0
-
-		self.curr_ticks = pg.time.get_ticks()
-
 	def makeRect(self, ndx, prevRect=pg.Rect(0,0,0,0)):
-		t = self.font.render(self.controller.rssModel.getTitles()[ndx], True, (0,0,255), (0,0,0))
+		t = self.font.render(self.controller.rssModel.getTitles()[ndx], True, (8,232,222), (0,0,0))
 		self.text.append(t)
 		rect = t.get_rect()
 		if prevRect.x != 0:
@@ -49,11 +54,13 @@ class TickerView(object):
 
 	def notify(self, num):
 		opts = self.controller.getCurrentOptions()
-		if num:
+		if num == 1:
 			self.speed = float(opts["Speed"]) / 500.0
 			if opts["Left"]:
 				self.speed *= -1
 			self.onMouse = opts["Stop"]
+		elif num == 2:
+			self.makeLinks()
 
 	def update(self):
 		prev_ticks = self.curr_ticks
@@ -75,6 +82,17 @@ class TickerView(object):
 					rect.x = -self.rects[ndx].width + (self.rects[ndx-1].x - 30 )
 				ndx += 1
 
+	def openLinks(self, pos):
+		ndx = 0
+		for rect in self.rects:
+			if rect.collidepoint(pos):
+				webbrowser.open(self.controller.rssModel.getLinks()[ndx], 0)
+				del self.rects[ndx]
+				del self.controller.rssModel.getLinks()[ndx]
+				del self.text[ndx]
+				del self.controller.rssModel.getTitles()[ndx]
+			ndx += 1
+
 	def runEventLoop(self):
 		done = False
 		isPaused = False
@@ -83,30 +101,25 @@ class TickerView(object):
 			speed = self.controller.optModel.getSpeed()
 			for event in pg.event.get():
 				if event.type == pg.QUIT: done = True
-				if event.type == pg.MOUSEMOTION:
+				elif event.type == pg.MOUSEMOTION:
 					if self.controller.optModel.getStop():
-						if event.pos[1] > 5 and event.pos[1] < 25:
+						if event.pos[1] > 5 and event.pos[1] < 25 and event.pos[0] > 5 and event.pos[0] < 635:
 							isPaused = True
-							if isPaused:
-								self.clock.tick(40)
-							while isPaused:
-								self.controller.optModel.setSpeed(0)
-								for event in pg.event.get():
-									if event.type == pg.MOUSEMOTION:
-										if event.pos[1] < 5 or event.pos[1] > 25:
-											self.controller.optModel.setSpeed(speed)
-											isPaused = False
-				if event.type == pg.MOUSEBUTTONDOWN:
-					ndx = 0
-					for rect in self.rects:
-						if rect.collidepoint(event.pos):
-							webbrowser.open(self.controller.rssModel.getLinks()[ndx], 2)
-						ndx += 1
+						else:
+							isPaused = False
+				elif event.type == pg.MOUSEBUTTONDOWN:
+						if event.button == 1:
+							self.openLinks(event.pos)
+						else:
+							if not self.controller.viewExists:
+								self.controller.createOpt()
 			ndx = 0
+			self.screen.fill((0,0,0))
 			for rect in self.rects:
 				if rect.x < self.screen.get_width() and (rect.x + rect.width) > 0:
 					self.screen.blit(self.text[ndx], rect)
 				ndx+=1
-			self.update()
+			if not isPaused:
+				self.update()
 			pg.display.flip()
 
