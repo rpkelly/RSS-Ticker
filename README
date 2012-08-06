@@ -1,3 +1,17 @@
+Instructions:
+Options do not go into effect until the "Save/Apply" button has been hit.
+The only exceptions are entering new URLs, which occur as soon as "Enter"
+is hit, deleting URLs, which occur either when the button, or "Delete" are
+hit, and moving or resizing the screen, which only occurs on startup.
+
+
+06 August 2012
+Phase IV is complete and all planned functionality has been added to the
+project.  If any bugs are found, please contact me via this github account
+I should have an SMTP server set up soon, and when that happens an account
+will be made specifically for bug reports.  More on that when it occurs.
+
+
 31 July 2012
 Phase III has been completed.  Feeds now stream in a random order across
 the ticker.  Also, clicking one will immediately remove it from the list
