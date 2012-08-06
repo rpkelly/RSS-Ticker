@@ -2,10 +2,12 @@
 	<Launch>0</Launch>
 	<urls>
 		<url>http://rss.cnn.com/rss/cnn_world.rss</url>
-		<url>http://rss.cnn.com/rss/cnn_us.rss</url>
 	</urls>
 	<Stop>0</Stop>
-	<Sync>3600</Sync>
-	<Speed>50.0</Speed>
+	<Sync>30</Sync>
+	<y>0</y>
+	<x>0</x>
+	<Size>100</Size>
+	<Speed>32</Speed>
 	<Left>1</Left>
 </options>

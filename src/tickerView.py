@@ -7,11 +7,11 @@ import Tkinter as tk
 
 class TickerView(object):
 	def __init__(self, controller):
-# To be used for phase IV
 #		r = tk.Tk()
-#		os.environ['SDL_VIDEO_WINDOW_POS'] = "%d, %d" % (0,r.winfo_screenheight()-30)
 		self.controller = controller
-		self.screen = pg.display.set_mode((640,30))#, pg.NOFRAME) #For phase IV
+		self.screensize = pg.display.Info().current_h
+		os.environ['SDL_VIDEO_WINDOW_POS'] = "%d, %d" % (self.controller.optModel.getLoc())
+		self.screen = pg.display.set_mode(((self.screensize * self.controller.optModel.getSize())/100, 30), pg.NOFRAME)
 		pg.display.set_caption("RSS Ticker")
 		self.screen.fill((0,0,0))
 		self.clock = pg.time.Clock()
@@ -29,7 +29,7 @@ class TickerView(object):
 		del self.rects[:]
 		del self.text[:]
 		ndx = 0;
-		for title in self.controller.rssModel.getTitles():
+		for title in self.controller.rssModel.getTuples():
 			if ndx == 0:
 				self.makeRect(0)
 				self.screen.blit(self.text[0], self.rects[0])
@@ -39,7 +39,7 @@ class TickerView(object):
 			ndx += 1
 
 	def makeRect(self, ndx, prevRect=pg.Rect(0,0,0,0)):
-		t = self.font.render(self.controller.rssModel.getTitles()[ndx], True, (8,232,222), (0,0,0))
+		t = self.font.render(self.controller.rssModel.getTuples()[ndx][0], True, (8,232,222), (0,0,0))
 		self.text.append(t)
 		rect = t.get_rect()
 		if prevRect.x != 0:
@@ -86,32 +86,33 @@ class TickerView(object):
 		ndx = 0
 		for rect in self.rects:
 			if rect.collidepoint(pos):
-				webbrowser.open(self.controller.rssModel.getLinks()[ndx], 0)
+				webbrowser.open(str(self.controller.rssModel.getTuples()[ndx][1]), 0)
 				del self.rects[ndx]
-				del self.controller.rssModel.getLinks()[ndx]
+				del self.controller.rssModel.getTuples()[ndx]
 				del self.text[ndx]
-				del self.controller.rssModel.getTitles()[ndx]
 			ndx += 1
 
 	def runEventLoop(self):
-		done = False
+		self.done = False
 		isPaused = False
-		while not done:
+		while not self.done:
 			self.clock.tick(40)
 			speed = self.controller.optModel.getSpeed()
 			for event in pg.event.get():
-				if event.type == pg.QUIT: done = True
+				if event.type == pg.QUIT: self.done = True
 				elif event.type == pg.MOUSEMOTION:
 					if self.controller.optModel.getStop():
 						if event.pos[1] > 5 and event.pos[1] < 25 and event.pos[0] > 5 and event.pos[0] < 635:
 							isPaused = True
 						else:
 							isPaused = False
-				elif event.type == pg.MOUSEBUTTONDOWN:
+				if event.type == pg.MOUSEBUTTONDOWN:
 						if event.button == 1:
 							self.openLinks(event.pos)
 						else:
+							print "Detect Right"
 							if not self.controller.viewExists:
+								print "Should Open"
 								self.controller.createOpt()
 			ndx = 0
 			self.screen.fill((0,0,0))

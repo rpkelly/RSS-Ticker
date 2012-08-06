@@ -6,6 +6,8 @@ class OptionsModel(object):
 		self.syncTime = 3600
 		self.speed = 50
 		self.urls = []
+		self.location = (0,0)
+		self.size = 100
 	def getLeft(self):
 		return self.goesLeft
 	def getLaunch(self):
@@ -18,6 +20,10 @@ class OptionsModel(object):
 		return self.speed
 	def getURLs(self):
 		return self.urls
+	def getLoc(self):
+		return self.location
+	def getSize(self):
+		return self.size
 	def setLeft(self, val):
 		self.goesLeft = val
 	def setLaunch(self, val):
@@ -33,3 +39,7 @@ class OptionsModel(object):
 			self.speed = 0
 		elif val > 100:
 			self.speed = 100
+	def setLoc(self, tup):
+		self.location = tup
+	def setSize(self, sz):
+		self.size = sz
